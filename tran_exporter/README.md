@@ -1,5 +1,8 @@
 # Property Extract Automation
 
+
+**Known bug at the moment -- crashes on tiles with null location .... waiting on site to be stable to fix this**
+
 Extracts your transactions excel. Script run as of 25 December 2020.  Site changes will end up breaking this.
 
 Haven't been able to fully test this yet as the site has been down, but in theory should work based off unit tests.
