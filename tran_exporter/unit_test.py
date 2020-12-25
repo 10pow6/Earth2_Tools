@@ -26,7 +26,6 @@ transactions = transactions[1:]
 
 for tran in transactions:
     data = tran.text.splitlines()
-
     tran_flag = tran.find_element_by_tag_name("img").get_attribute("src")
     if len(data) > 2:
         tran_loc = data[0]
