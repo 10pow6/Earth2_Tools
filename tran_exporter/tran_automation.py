@@ -110,12 +110,20 @@ try:
                 data = tran.text.splitlines()
 
                 tran_flag = tran.find_element_by_tag_name("img").get_attribute("src")
-                tran_loc = data[0]
-                tran_prop_size = data[1]
-                tran_type = re.search(r'[a-zA-Z\s\(\)]+', data[2]).group(0)
-                tran_date = re.search(r'\d{4}-\d{2}-\d{2}', data[2]).group(0)
 
-                bals = re.search(r'[-+]\$[^\]]+', data[2]).group(0)
+                if len(data) > 2:
+                    tran_loc = data[0]
+                    tran_prop_size = data[1]
+                    tran_type = re.search(r'[a-zA-Z\s\(\)]+', data[2]).group(0)
+                    tran_date = re.search(r'\d{4}-\d{2}-\d{2}', data[2]).group(0)
+                    bals = re.search(r'[-+]\$[^\]]+', data[2]).group(0)
+                else: #fix for null locations
+                    tran_loc = "NULL LOCATION"
+                    tran_prop_size = data[0]
+                    tran_type = re.search(r'[a-zA-Z\s\(\)]+', data[1]).group(0)
+                    tran_date = re.search(r'\d{4}-\d{2}-\d{2}', data[1]).group(0)
+                    bals = re.search(r'[-+]\$[^\]]+', data[1]).group(0)
+
                 bals = bals.split()
                 tran_amt = bals[0]
                 tran_bal = bals[1]
