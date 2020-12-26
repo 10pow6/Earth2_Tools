@@ -8,7 +8,10 @@ Extracts your owned game properties to excel. Script run as of 25 December 2020.
 
 
 ## Known Bugs
-* Currently properties for sale will not have the correct location or gps coordinates pulled.  Needs fixed.
+```
+¯\_(ツ)_/¯
+```
+
 
 ## General Setup Info
 

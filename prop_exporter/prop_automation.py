@@ -114,15 +114,21 @@ try:
                 tile_purchase_rate = data[5]
                 tile_gps = data[7].split(" ")
 
+                # fix to account for buy properties additional data
+                if( len( data) > 9 ):
+                    tile_gps = data[10].split(" ")
+                    tile_location = data[11]
+                else:
+                    tile_gps = data[7].split(" ")
+                    tile_location = data[8]
+
                 # some lat long combos do not play nicely and caused this split to crash
-                # explore why at some later point
+                # I think this was related to the buy properties.  Don't want to remove
+                # this piece as it works as is... but probably unecessary now.
                 tile_lon = tile_gps[0]
                 tile_lat = ""
                 if( len(tile_gps) > 1 ):
                     tile_lat = tile_gps[1]
-
-
-                tile_location = data[8]
                 
                 print("Current Page: ", current_page)
                 print("Tile URL: ", tile_url )
