@@ -6,6 +6,10 @@ Extracts your owned game properties to excel. Script run as of 25 December 2020.
 
 **IMPORTANT** Never run any code / etc. from the internet if you don't know what it does. There are a lot of bad folks out there, and they could be malicious!
 
+
+## Known Bugs
+* Currently properties for sale will not have the correct location or gps coordinates pulled.  Needs fixed.
+
 ## General Setup Info
 
 ### Clone the directory

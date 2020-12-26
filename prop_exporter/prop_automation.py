@@ -77,7 +77,7 @@ try:
         # note: we lack error handling because this was just thrown together :)
 
         # manage start page override
-        if( START_PAGE is not 0 ):
+        if( START_PAGE != 0 ):
             # navigate to where we want
             driver.find_element_by_link_text(items[START_PAGE - 1].text).click()
             print( "Skipping to page ", START_PAGE )
@@ -90,7 +90,7 @@ try:
             input("Press Enter After Next Page Loads...")
 
         # manage end page override
-        if( END_PAGE is 0 ):
+        if( END_PAGE == 0 ):
             END_PAGE = int(max_page)
 
         row = [ "Page", "Prop_URL", "Prop_Size", "Prop_Alias", "Prop_MarketRate", "Prop_PurchaseRate", "Prop_Lon", "Prop_Lat", "Prop_Location"]
