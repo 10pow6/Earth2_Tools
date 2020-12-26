@@ -1,5 +1,6 @@
 # Transaction Extract Automation
 
+Please note, 10pow6 is **not affiliated in any way with Earth 2.**
 
 Extracts your transactions excel. Script run as of 25 December 2020.  Site changes will end up breaking this.
 
