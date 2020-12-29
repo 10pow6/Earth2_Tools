@@ -33,10 +33,16 @@ for tile in tiles:
                 # fix to account for buy properties additional data
                 if( len( data) > 9 ):
                     tile_gps = data[10].split(" ")
-                    tile_location = data[11]
+                    try:
+                        tile_location = data[11]
+                    except:
+                        tile_location = "NaN"
                 else:
                     tile_gps = data[7].split(" ")
-                    tile_location = data[8]
+                    try:
+                        tile_location = data[8]
+                    except:
+                        tile_location = "NaN"
                 # some lat long combos do not play nicely and caused this split to crash
                 # explore why at some later point
                 tile_lon = tile_gps[0]
