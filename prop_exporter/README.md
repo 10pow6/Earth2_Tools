@@ -17,7 +17,7 @@ Extracts your owned game properties to excel. Script run as of 25 December 2020.
 
 ### Clone the directory
 ```
-git clone https://github.com/10pow6/e2_tools.git
+git clone https://github.com/10pow6/Earth2_Tools.git
 ```
 
 ### Setup your venv

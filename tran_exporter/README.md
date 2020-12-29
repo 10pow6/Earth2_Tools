@@ -12,7 +12,7 @@ Haven't been able to fully test this yet as the site has been down, but in theor
 
 ### Clone the directory
 ```
-git clone https://github.com/10pow6/e2_tools.git
+git clone https://github.com/10pow6/Earth2_Tools.git
 ```
 
 ### Setup your venv
