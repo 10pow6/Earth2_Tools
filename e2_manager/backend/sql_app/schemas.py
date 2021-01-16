@@ -15,8 +15,20 @@ class CountryMod(CountryBase):
     pass
 
 
-
 class Country(CountryBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class CountryHistoricalBase(CountryBase):
+    pass
+
+class CountryHistoricalMod(CountryBase):
+    pass
+
+class CountryHistorical(CountryBase):
     id: int
 
     class Config:

@@ -30,3 +30,7 @@ Sample Output
 ==Get just US==
 [{'country_code': 'US', 'update_time': '2021-01-15T23:26:55.545000', 'trade_average': 6.394, 'final': 38.802, 'total_tiles_sold': 597176, 'id': 1}]
 ```
+
+
+
+http://localhost:8000

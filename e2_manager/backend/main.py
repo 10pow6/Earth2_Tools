@@ -50,6 +50,6 @@ def read_db_countries(skip: int = 0, limit: int = 100, country_code: Optional[st
 def mod_country( country: schemas.CountryMod, db: Session = Depends(get_db)):
     db_country = crud.get_country_by_code(db, country_code=country.country_code)
     if db_country:
-        return crud.update_country(db=db, id=db_country.id, country=country)
+        return crud.update_country(db=db, country=country, historical_country=db_country)
 
     return crud.create_country(db=db, country=country)

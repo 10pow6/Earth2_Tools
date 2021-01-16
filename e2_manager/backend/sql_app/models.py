@@ -13,3 +13,14 @@ class Country(Base):
     trade_average = Column(Float)
     final = Column(Float)
     total_tiles_sold = Column(Integer)
+
+class CountryHistorical(Base):
+    __tablename__ = "countries_historical"
+
+    id = Column(Integer, primary_key=True, index=True)
+    country_code = Column(String, index=True)
+    update_time = Column(DateTime, index=True)
+    trade_average = Column(Float)
+    final = Column(Float)
+    total_tiles_sold = Column(Integer)
+

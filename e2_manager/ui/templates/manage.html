@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>E2 Manager</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+   <h1>E2 Manager: Management</h1>
+   <p>
+    <a href="/">Home</a><br>
+   </p>
+
+   <input type="button" id="load_countries" value="Load Countries">
+</body>
+
+
+<script>
+    $(document).ready( function() {
+        $('#load_countries').click(function() {
+           alert("Should call backend endpoints :P");
+           $.ajax("{{ url_for('manage') }}").done(function (reply) {
+              $('#container').html(reply);
+           });
+        });
+    });
+</script>
+
+
+</html>
