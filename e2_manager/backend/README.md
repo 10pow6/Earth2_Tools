@@ -11,7 +11,7 @@ venv\Scripts\active
 uvicorn main:app --reload
 ```
 
-Console 1 Activate Venv & Do Unit Tests (later this will be frontend instructions)
+Console 2 Activate Venv & Do Unit Tests (later this will be frontend instructions)
 ```
 venv\Scripts\active
 unit_testing.py
