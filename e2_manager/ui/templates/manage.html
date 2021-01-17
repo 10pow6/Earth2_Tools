@@ -12,16 +12,19 @@
     <a href="/">Home</a><br>
    </p>
 
-   <input type="button" id="load_countries" value="Load Countries">
+   <input type="button" id="load_countries" value="Load Countries"><div id="load_country_status"></div>
+
 </body>
 
 
 <script>
     $(document).ready( function() {
         $('#load_countries').click(function() {
-           alert("Should call backend endpoints :P");
-           $.ajax("{{ url_for('manage') }}").done(function (reply) {
-              $('#container').html(reply);
+
+           $('#load_country_status').html("<b>PLEASE WAIT, LOADING</b>");
+
+           $.ajax("{{ url_for('countries_load_all') }}").done(function (reply) {
+              $('#load_country_status').html(reply);
            });
         });
     });
