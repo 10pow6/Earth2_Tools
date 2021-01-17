@@ -45,6 +45,12 @@ def read_db_countries(skip: int = 0, limit: int = 100, country_code: Optional[st
         return [ crud.get_country_by_code(db=db, country_code=country_code) ]
     
 
+@app.get("/countries_historical/db", response_model=List[schemas.CountryHistorical])
+def read_db_countries_historical(skip: int = 0, limit: int = 100, country_code: Optional[str] = None, db: Session = Depends(get_db)):
+    if country_code is None:
+        return crud.get_countries_historical(db, skip=skip, limit=limit)
+    else:
+        return crud.get_country_historical_by_code(db=db, country_code=country_code)
 
 @app.post("/countries/db", response_model=schemas.Country)
 def mod_country( country: schemas.CountryMod, db: Session = Depends(get_db)):
