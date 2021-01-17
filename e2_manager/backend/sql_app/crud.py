@@ -10,6 +10,12 @@ def get_country_by_code(db: Session, country_code: str):
 def get_countries(db: Session, skip: int = 0, limit: int = 100 ):
     return db.query(models.Country).offset(skip).limit(limit).all()
 
+def get_country_historical_by_code(db: Session, country_code: str):
+    return db.query(models.CountryHistorical).filter(models.CountryHistorical.country_code == country_code).all()
+
+def get_countries_historical(db: Session, skip: int = 0, limit: int = 100 ):
+    return db.query(models.CountryHistorical).offset(skip).limit(limit).all()
+
 def create_country(db: Session, country: schemas.CountryMod):
     db_country = models.Country(country_code=country.country_code,update_time=country.update_time, trade_average=country.trade_average,final=country.final,total_tiles_sold=country.total_tiles_sold)
     db.add(db_country)

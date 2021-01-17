@@ -36,6 +36,13 @@ def countries():
 
     return render_template('countries.html',country_data=r.json())
 
+@app.route('/countries_detail/<string:country_code>')
+def countries_detail(country_code):
+    r = requests.get(BACKEND_API+"countries_historical/db?country_code=" + country_code)
+
+    return render_template('countries_detail.html',country_data=r.json(), country_code=country_code)
+
+
 @app.route('/countries_export',methods = ['GET', 'POST'])
 def countries_export():
     with open('ui_exports//countries.csv', 'w', newline='') as csvfile:

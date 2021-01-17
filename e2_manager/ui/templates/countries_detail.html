@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>E2 Manager</title>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+   <h1>E2 Manager: Countries Historical Detail : {{country_code}}</h1>
+   <p>
+    <a href="/">Home</a><br>
+    <a href="/countries">Back</a>
+   </p>
+
+
+   <table>
+        <tr>
+            <th>country_code</th>
+            <th>update_time</th>
+            <th>trade_average</th>
+            <th>final</th>
+            <th>total_tiles_sold</th>
+        </tr>
+            {% for country in country_data %}
+                <tr>
+                    <td>{{ country["country_code"] }}</td>
+                    <td>{{ country["update_time"] }}</td>
+                    <td>{{ country["trade_average"] }}</td>
+                    <td>{{ country["final"] }}</td>
+                    <td>{{ country["total_tiles_sold"] }}</td>
+                </tr>
+            {% endfor %}   
+   </table>
+
+
+</body>
+
+
+
+</html>
