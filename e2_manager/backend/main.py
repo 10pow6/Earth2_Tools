@@ -68,3 +68,16 @@ def read_e2_properties_count( profile_id: str):
 @app.get("/properties/e2")
 def read_e2_properties( profile_id: str, page: int = 1, property_count: int = 60):
     return E2Q.get_properties( profile_id, page, property_count )
+
+
+@app.post("/properties/db", response_model=List[schemas.Property])
+def mod_property( properties: List[schemas.PropertyMod], db: Session = Depends(get_db)):
+    post_result = []
+    for prop in properties:
+        db_property = crud.get_property_by_landfield_id(db, landfield_id=prop.landfield_id)
+        if db_property:
+            post_result.append( crud.update_property(db=db, prop=prop,historical_prop=db_property) )
+        else:
+            post_result.append( crud.create_property(db=db, prop=prop) )
+
+    return post_result

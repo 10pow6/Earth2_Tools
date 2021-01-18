@@ -10,6 +10,10 @@ from datetime import datetime
 app = Flask(__name__)
 BACKEND_API="http://localhost:8000/"
 
+# To Be Implemented
+E2_RATE_LIMITER=1
+
+
 db_json_payload = """
     {
         "country_code": "$COUNTRY_CODE",
@@ -17,6 +21,24 @@ db_json_payload = """
         "trade_average": $TRADE_AVG,
         "final": $FINAL,
         "total_tiles_sold": $TOTAL_TILES_SOLD
+    }
+"""
+
+db_json_property_payload = """
+    {
+        "landfield_id": "$LANDFIELD_ID",
+        "for_sale": $FOR_SALE,
+        "description": "$DESCRIPTION",
+        "location": "$LOCATION",
+        "center": "$CENTER",
+        "price": $PRICE,
+        "country": "$COUNTRY",
+        "tile_count": $TILE_COUNT,
+        "current_value": $CURRENT_VALUE,
+        "trading_value": $TRADING_VALUE,
+        "tile_class": $TILE_CLASS,
+        "update_time": "$UPDATE_TIME",
+        "profile_id": "$PROFILE_ID"
     }
 """
 
@@ -82,3 +104,62 @@ def countries_load_all():
 
     return render_template('countries_load_all.html',status_codes=status_codes)
 
+
+
+
+@app.route('/properties_load/<string:profile_id>', methods = ['GET', 'POST'])
+def properties_load(profile_id):
+    query_param = "?profile_id=" + profile_id
+    print("TRYING: " + BACKEND_API+"properties_count/e2/" + query_param)
+
+    status_codes = []
+    r = requests.get(BACKEND_API+"properties_count/e2/" + query_param)
+    total_props = r.json()["data"]["getUserLandfields"]["count"]
+    print("TOTAL_PROPS: " + str(total_props) )
+    status_codes.append(r.status_code)
+
+    pages = 1
+    if( total_props / 60 > total_props // 60 ):
+        pages = total_props//60 + 1
+    else:
+        pages = total_props//60
+
+    cur_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]+"Z"
+    for i in range(1,(pages+1) ):
+        query_page =  query_param + "&page=" + str(i) + "&count=60"
+        
+        r = requests.get(BACKEND_API+"properties/e2" + query_page)
+        status_codes.append(r.status_code)
+
+
+        payloads = r.json()["data"]["getUserLandfields"]["landfields"]
+        
+        final_property_json_str = []
+        for property_payload in payloads:
+            prop = Template(db_json_property_payload).substitute(
+                LANDFIELD_ID=property_payload["id"],
+                FOR_SALE=str(property_payload["forSale"]).lower(),
+                DESCRIPTION=property_payload["description"],
+                LOCATION=property_payload["location"],
+                CENTER=property_payload["center"],
+                PRICE=property_payload["price"],
+                COUNTRY=property_payload["country"],
+                TILE_COUNT=property_payload["tileCount"],
+                CURRENT_VALUE=property_payload["currentValue"],
+                TRADING_VALUE=property_payload["tradingValue"],
+                TILE_CLASS=property_payload["tileClass"],
+                UPDATE_TIME=cur_time,
+                PROFILE_ID=profile_id )
+            
+            final_property_json_str.append(prop)
+        
+        final_property_json = '[' + ','.join(final_property_json_str) + ']'
+        print(final_property_json)
+  
+        r = requests.post(BACKEND_API+"properties/db", json=json.loads(final_property_json) )
+        status_codes.append(r.status_code)
+        
+
+        
+
+    return render_template('properties_load.html',status_codes=status_codes)
