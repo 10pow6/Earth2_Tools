@@ -24,3 +24,39 @@ class CountryHistorical(Base):
     final = Column(Float)
     total_tiles_sold = Column(Integer)
 
+
+class Property(Base):
+    __tablename__ = "properties"
+
+    id = Column(Integer, primary_key=True, index=True)
+    landfield_id = Column(String, unique=True, index=True)
+    for_sale = Column(Boolean)
+    description = Column(String)
+    location = Column(String)
+    center = Column(String)
+    price = Column(Float)
+    country = Column(String)
+    tile_count = Column(Integer)
+    current_value = Column(Float)
+    trading_value = Column(Float)
+    tile_class = Column(Integer)
+    update_time = Column(DateTime, index=True)
+    profile_id = Column(String)
+
+class PropertyHistorical(Base):
+    __tablename__ = "properties_historical"
+
+    id = Column(Integer, primary_key=True, index=True)
+    landfield_id = Column(String, index=True)
+    for_sale = Column(Boolean)
+    description = Column(String)
+    location = Column(String)
+    center = Column(String)
+    price = Column(Float)
+    country = Column(String)
+    tile_count = Column(Integer)
+    current_value = Column(Float)
+    trading_value = Column(Float)
+    tile_class = Column(Integer)
+    update_time = Column(DateTime, index=True)
+    profile_id = Column(String)

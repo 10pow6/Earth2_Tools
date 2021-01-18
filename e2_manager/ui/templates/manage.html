@@ -14,6 +14,9 @@
 
    <input type="button" id="load_countries" value="Load Countries"><div id="load_country_status"></div>
 
+   <p></p>
+   <input type="button" id="load_properties" value="Load Properties">&nbsp;<label for="profile_id">Profile ID:</label><input type="text" id="profile_id" name="Profile ID"><div id="load_property_status"></div>
+
 </body>
 
 
@@ -26,6 +29,15 @@
            $.ajax("{{ url_for('countries_load_all') }}").done(function (reply) {
               $('#load_country_status').html(reply);
            });
+        });
+
+
+        $('#load_properties').click(function() {
+            $('#load_property_status').html("<b>PLEASE WAIT, LOADING</b>");
+
+            $.ajax("{{ url_for('properties_load',profile_id='UGLYSOLUTIONFORVAR') }}".replace("UGLYSOLUTIONFORVAR", $("#profile_id").val() )  ).done(function (reply) {
+                $('#load_property_status').html(reply);
+            });
         });
     });
 </script>
