@@ -10,6 +10,7 @@ class E2Queries:
         self.DEBUG=False
         self.E2_ENDPOINT="https://app.earth2.io/graphql"
 
+        self.ERROR_INVALID_PROFILE = '{ "errors": [{ "status": -1, "detail": "Invalid profile id in query"}]}'
         self.ERROR_DEBUG_MODE = '{ "errors": [{ "status": "-1", "detail": "DEBUG MODE ENABLED."}]}'
         self.ERROR_NO_COUNTRY = '{ "errors": [{ "status": "-1", "detail": "No countries input for query."}]}'
         self.ERROR_INVALID_COUNTRY = '{ "errors": [{ "status": -1, "detail": "Invalid country in query"}]}'
@@ -41,6 +42,43 @@ class E2Queries:
                         location
                     }
                 }
+            }
+        }
+        """
+
+        self.graphql_get_properties = """
+        query {
+            getUserLandfields(
+                userId: "$PROFILE_ID"
+                page: $PAGE
+                items: $PROPERTY_COUNT
+            ) {
+                count
+                landfields {
+                    id
+                    forSale
+                    description
+                    location
+                    center
+                    price
+                    country
+                    tileCount
+                    currentValue
+                    tradingValue
+                    tileClass
+                }
+            }
+        }
+        """
+
+        self.graphql_get_properties_count = """
+        query {
+            getUserLandfields(
+                userId: "$PROFILE_ID"
+                page: 1
+                items: 1
+            ) {
+                count
             }
         }
         """
@@ -90,6 +128,37 @@ class E2Queries:
     
     def get_countries_data(self, countries ):
         query = self.__build_graphql_get_countries(countries )
+
+        if( query[0] ):
+            return self.__run_query(query[1] )
+        else:
+            return query
+
+
+
+    ##################################################
+    # Property Processing
+    ##################################################   
+    def __build_graphql_get_properties_count( self, profile_id ):
+        if( len(profile_id) != 36 ):
+            return False,json.loads(self.ERROR_INVALID_PROFILE)
+        return True,Template(self.graphql_get_properties_count).substitute(PROFILE_ID=profile_id)
+    
+    def get_properties_count(self, profile_id ):
+        query = self.__build_graphql_get_properties_count(profile_id )
+
+        if( query[0] ):
+            return self.__run_query(query[1] )
+        else:
+            return query
+
+    def __build_graphql_get_properties( self, profile_id, page, property_count ):
+        if( len(profile_id) != 36 ):
+            return False,json.loads(self.ERROR_INVALID_PROFILE)
+        return True,Template(self.graphql_get_properties).substitute(PROFILE_ID=profile_id,PAGE=page,PROPERTY_COUNT=property_count)
+    
+    def get_properties(self, profile_id, page, property_count ):
+        query = self.__build_graphql_get_properties(profile_id, page, property_count )
 
         if( query[0] ):
             return self.__run_query(query[1] )
