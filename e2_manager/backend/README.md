@@ -8,6 +8,11 @@ pip install -r requirements.txt
 Console 1 Activate Venv & Start Backend Server
 ```
 venv\Scripts\active
+uvicorn main:app
+```
+
+Note -- Only for testing, do not use
+```
 uvicorn main:app --reload
 ```
 

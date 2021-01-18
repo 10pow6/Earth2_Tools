@@ -37,6 +37,7 @@ db_json_property_payload = """
         "current_value": $CURRENT_VALUE,
         "trading_value": $TRADING_VALUE,
         "tile_class": $TILE_CLASS,
+        "tile_class_revenue": $TILE_CLASS_REVENUE,
         "update_time": "$UPDATE_TIME",
         "profile_id": "$PROFILE_ID"
     }
@@ -148,6 +149,7 @@ def properties_load(profile_id):
                 CURRENT_VALUE=property_payload["currentValue"],
                 TRADING_VALUE=property_payload["tradingValue"],
                 TILE_CLASS=property_payload["tileClass"],
+                TILE_CLASS_REVENUE=property_payload["tileClassRevenue"],
                 UPDATE_TIME=cur_time,
                 PROFILE_ID=profile_id )
             

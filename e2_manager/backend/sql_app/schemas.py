@@ -49,6 +49,7 @@ class PropertyBase(BaseModel):
     current_value: float
     trading_value: float
     tile_class: int
+    tile_class_revenue: float
 
 class PropertyMod(PropertyBase):
     landfield_id: str

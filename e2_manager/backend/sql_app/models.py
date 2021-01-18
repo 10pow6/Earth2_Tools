@@ -40,6 +40,7 @@ class Property(Base):
     current_value = Column(Float)
     trading_value = Column(Float)
     tile_class = Column(Integer)
+    tile_class_revenue = Column(Float)
     update_time = Column(DateTime, index=True)
     profile_id = Column(String)
 
@@ -58,5 +59,6 @@ class PropertyHistorical(Base):
     current_value = Column(Float)
     trading_value = Column(Float)
     tile_class = Column(Integer)
+    tile_class_revenue = Column(Float)
     update_time = Column(DateTime, index=True)
     profile_id = Column(String)

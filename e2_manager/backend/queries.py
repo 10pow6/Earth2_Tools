@@ -66,6 +66,7 @@ class E2Queries:
                     currentValue
                     tradingValue
                     tileClass
+                    tileClassRevenue
                 }
             }
         }
