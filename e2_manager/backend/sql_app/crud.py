@@ -63,6 +63,7 @@ def create_property(db: Session, prop: schemas.PropertyMod ):
         current_value=prop.current_value,
         trading_value=prop.trading_value,
         tile_class=prop.tile_class,
+        tile_class_revenue=prop.tile_class_revenue,
         update_time=prop.update_time,
         profile_id=prop.profile_id
         )
@@ -86,6 +87,7 @@ def update_property(db: Session, prop: schemas.PropertyMod, historical_prop: sch
         current_value=historical_prop.current_value,
         trading_value=historical_prop.trading_value,
         tile_class=historical_prop.tile_class,
+        tile_class_revenue=historical_prop.tile_class_revenue,
         update_time=historical_prop.update_time,
         profile_id=historical_prop.profile_id
         )
@@ -103,6 +105,7 @@ def update_property(db: Session, prop: schemas.PropertyMod, historical_prop: sch
         current_value=prop.current_value,
         trading_value=prop.trading_value,
         tile_class=prop.tile_class,
+        tile_class_revenue=prop.tile_class_revenue,
         update_time=prop.update_time,
         profile_id=prop.profile_id
         )
