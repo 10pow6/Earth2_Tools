@@ -25,7 +25,7 @@ unit_testing.py
 Sample Output
 ```
 ==Hello World==
-{"Made with love":"by Dworak and butt"}
+{"Made with love":"for the E2 community"}
 ==E2 Countries==
 {'data': {'getTilePrices': [{'countryCode': 'US', 'tradeAverage': 6.394, 'final': 38.802, 'totalTilesSold': 597176}, {'countryCode': 'NU', 'tradeAverage': 0.175, 'final': 0.274, 'totalTilesSold': 101183}]}}
 ==Current DB Countries Prior Load==

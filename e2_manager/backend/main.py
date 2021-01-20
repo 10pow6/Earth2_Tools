@@ -30,7 +30,7 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"Made with love": "by Dworak and butt"}
+    return {"Made with love": "for the E2 community"}
 
 ################## country management
 @app.get("/countries/e2")
