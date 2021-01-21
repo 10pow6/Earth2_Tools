@@ -59,10 +59,15 @@ def countries():
 
     return render_template('countries.html',country_data=r.json())
 
+@app.route('/properties')
+def properties():
+    
+    return render_template('properties.html',country_data=r.json())
+
 @app.route('/countries_detail/<string:country_code>')
 def countries_detail(country_code):
     r = requests.get(BACKEND_API+"countries_historical/db?country_code=" + country_code)
-
+    print(r.json())
     return render_template('countries_detail.html',country_data=r.json(), country_code=country_code)
 
 
@@ -80,9 +85,29 @@ def countries_export():
     return render_template('countries_export.html')   
 
 
+#### TODO:  parameterize this to accept string list
 @app.route('/countries_load_all', methods = ['GET', 'POST'])
 def countries_load_all():
-    #### TODO:  full country list to go here.  make 2-4 calls with a delay to api to be kind to E2 servers :P
+    print("TRYING: " + BACKEND_API+"countries_all/e2")
+    status_codes = []
+    r = requests.get(BACKEND_API+"countries_all/e2")
+
+    cur_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]+"Z"
+    for payload in r.json():
+        country_payload = payload["data"]["getTilePrices"]
+        status_codes.append(r.status_code)
+        for country in country_payload:
+            db_payload = Template(db_json_payload).substitute(COUNTRY_CODE=country["countryCode"],UPDATE_TIME=cur_time,TRADE_AVG=country["tradeAverage"],FINAL=country["final"],TOTAL_TILES_SOLD=country["totalTilesSold"])
+            r = requests.post(BACKEND_API+"countries/db", json=json.loads(db_payload) )
+            status_codes.append(r.status_code)
+
+
+    return render_template('countries_load_all.html',status_codes=status_codes)
+
+#### TODO:  parameterize this to accept string list
+@app.route('/countries_load_subset', methods = ['GET', 'POST'])
+def countries_load_subset():
+
     country_list = ["US","NU"]
     query_param = "?"
 

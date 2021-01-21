@@ -25,6 +25,7 @@
             <th>trade_average</th>
             <th>final</th>
             <th>total_tiles_sold</th>
+            <th>refresh_country</th>
         </tr>
             {% for country in country_data %}
                 <tr>
@@ -33,6 +34,7 @@
                     <td>{{ country["trade_average"] }}</td>
                     <td>{{ country["final"] }}</td>
                     <td>{{ country["total_tiles_sold"] }}</td>
+                    <td><input type="button" id="refresh_country_{{ country['country_code'] }}" value="Refresh button doesn't work yet..."></td>
                 </tr>
             {% endfor %}   
    </table>
@@ -59,6 +61,7 @@
                 contentType: "application/json; charset=utf-8"
             });
         });
+        
     });
 </script>
 
