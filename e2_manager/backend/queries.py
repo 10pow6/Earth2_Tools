@@ -135,6 +135,19 @@ class E2Queries:
         else:
             return query
 
+    def get_countries_data_all( self ):
+        c = []
+        result = []
+        for i in range(0, len(self.E2_COUNTRIES) ):
+            c.append(self.E2_COUNTRIES[i])
+            if (i != 0) and ((i % 20 == 0) or (i == len(self.E2_COUNTRIES) - 1)):
+                query = self.__build_graphql_get_countries( c )
+                result.append(self.__run_query(query[1] ))
+
+                c = []
+
+
+        return result
 
 
     ##################################################

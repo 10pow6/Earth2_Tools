@@ -47,6 +47,12 @@ def update_country(db: Session, country: schemas.CountryMod, historical_country:
 
 
 ############## PROPERTY CRUD
+def get_properties(db: Session, skip: int = 0, limit: int = 100, profile_id: str = None):
+    if profile_id is None:
+        return db.query(models.Property).offset(skip).limit(limit).all()
+    else:
+        return db.query(models.Property).filter(models.PropertyMod.profile_id == profile_id).offset(skip).limit(limit).all()
+
 def get_property_by_landfield_id(db: Session, landfield_id: str):
     return db.query(models.Property).filter(models.Property.landfield_id == landfield_id).first()
 
