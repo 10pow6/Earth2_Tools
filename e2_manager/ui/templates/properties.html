@@ -16,9 +16,94 @@
     <a href="/">Home</a><br>
    </p>
 
-   <input type="button" id="export_countries" value="Export Countries"><div id="export_countries_status"></div>
    
-todo
+   <select name="Profile IDs" id="profile_id">
+            <option value =""></option>
+        {% for profile in all_profile_id %}
+            <option value="{{ profile[0] }}" {% if profile[0]  == profile_id %} selected="selected" {% endif %} >{{ profile[0] }}</option>
+        {% endfor %} 
+   </select>
+   <br>
 
+   {% if profile_id != None %}
+   <input type="button" id="export_properties" value="Export Properties"><div id="export_properties_status"></div>
+   <div id="properties_export_status"></div>
+   {% endif %}
+
+   <table>
+    <tr>
+        <th>id</th>
+        <th>landfield_id</th>
+        <th>for_sale</th>
+        <th>description</th>
+        <th>location</th>
+        <th>center</th>
+        <th>price</th>
+        <th>country</th>
+        <th>tile_count</th>
+        <th>current_value</th>
+        <th>trading_value</th>
+        <th>tile_class</th>
+        <th>tile_class_revenue (accumulated LIT)</th>
+        <th>update_time</th>
+    </tr>
+        {% for prop in property_data %}
+            <tr>
+                <td>{{ prop["id"] }}</td>
+                <td>{{ prop["landfield_id"] }}</td>
+                <td>{{ prop["for_sale"] }}</td>
+                <td>{{ prop["description"] }}</td>
+                <td>{{ prop["location"] }}</td>
+                <td>{{ prop["center"] }}</td>
+                <td>{{ prop["price"] }}</td>
+                <td>{{ prop["country"] }}</td>
+                <td>{{ prop["tile_count"] }}</td>
+                <td>{{ prop["current_value"] }}</td>
+                <td>{{ prop["trading_value"] }}</td>
+                <td>{{ prop["tile_class"] }}</td>
+                <td>{{ prop["tile_class_revenue"] }}</td>
+                <td>{{ prop["update_time"] }}</td>
+            </tr>
+        {% endfor %}   
+</table>
+<br>
+<!-- pagination -->
+{% if profile_id != None %}
+    {% for i in range( (total |int / limit |int)|round(0,'ceil')|int ) %}
+      <a href="{{ url_for('properties') }}{{ profile_id }}?skip={{ i }}">{{ i }}</a> &nbsp;
+    {% endfor %}
+{% endif %}
+
+<script>
+    $(document).ready( function() {
+        $('#profile_id').change(function() {
+            document.location.href="{{ url_for('properties') }}" + "/" + $('#profile_id').find(":selected").text();
+        });
+
+
+
+        $('#export_properties').click(function() {
+            $('#properties_export_status').html("<b>PLEASE WAIT, EXPORTING</b>");
+            var post_uri = '{ "total_props": "' + '{{ total | string }}' + '","profile_id": "' + '{{ profile_id }}' + '"}'
+        
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('properties_export') }}",
+                data: post_uri,
+                success: function () {
+                    $('#properties_export_status').html("<b>DONE</b>");
+                },
+                failure: function () {
+                    $('#properties_export_status').html("<b>FAILED</b>");
+                },
+                dataType: "json",
+                contentType: "application/json; charset=utf-8"
+            });
+        });
+
+
+    });
+</script>
 
 </html>
+

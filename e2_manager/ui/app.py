@@ -59,10 +59,42 @@ def countries():
 
     return render_template('countries.html',country_data=r.json())
 
-@app.route('/properties')
-def properties():
+@app.route('/properties/', defaults={'profile_id': None})
+@app.route('/properties/<string:profile_id>',methods=['GET'])
+def properties(profile_id=None):
+
+    skip  = request.args.get('skip', None, type=int)
+
+    limit  = 10
+    total  = request.args.get('total', None, type=int)
+    if( skip == None ):
+        skip = 0
+    else:
+        skip = skip * limit
+
+    if( profile_id != None and total == None ):
+        total = requests.get(BACKEND_API+"properties_profile_id_count/db/?profile_id="+profile_id).text
+    else:
+        total = total
     
-    return render_template('properties.html',country_data=r.json())
+    print("SKIP: ", skip)
+    print("LIMIT: ", limit)
+    print("TOTAL: ", total)
+    print("PROFILE_ID: ", profile_id)
+
+    r = requests.get(BACKEND_API+"properties_profile_id/db/")
+
+    q = None
+
+    if( profile_id != None ):
+        q = requests.get(BACKEND_API+"properties_by_id/db/?skip=" + str(skip) + "&limit=" + str(limit) + "&profile_id=" + profile_id).json()
+    else:
+        q = json.loads("{}")
+
+    return render_template('properties.html',all_profile_id=r.json(), property_data=q, profile_id=profile_id, skip=skip, limit=limit,total=total)
+
+
+
 
 @app.route('/countries_detail/<string:country_code>')
 def countries_detail(country_code):
@@ -73,7 +105,7 @@ def countries_detail(country_code):
 
 @app.route('/countries_export',methods = ['GET', 'POST'])
 def countries_export():
-    with open('ui_exports//countries.csv', 'w', newline='') as csvfile:
+    with open('ui_exports//countries.csv', 'w', newline='',encoding='utf-8') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
                             quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
@@ -83,6 +115,7 @@ def countries_export():
             spamwriter.writerow( [ country_row["country_code"], country_row["update_time"], country_row["trade_average"], country_row["final"], country_row["total_tiles_sold"] ] )
 
     return render_template('countries_export.html')   
+
 
 
 #### TODO:  parameterize this to accept string list
@@ -131,6 +164,23 @@ def countries_load_subset():
     return render_template('countries_load_all.html',status_codes=status_codes)
 
 
+
+@app.route('/properties_export',methods = ['GET', 'POST'])
+def properties_export():
+
+    r = requests.get(BACKEND_API+"properties_by_id/db/?skip=0&limit=" + str(request.json["total_props"]) + "&property_id=" + request.json["profile_id"])
+
+    with open('ui_exports//properties.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=',',
+                            quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+
+        spamwriter.writerow( [ "id", "landfield_id", "for_sale", "description", "location", "center", "price", "country", "tile_count", "current_value", "trading_value", "tile_class", "tile_class_revenue", "update_time" ] )
+        for property in r.json():
+            spamwriter.writerow( [ property["id"], property["landfield_id"], property["for_sale"], property["description"], property["location"], property["center"], property["price"], property["country"], property["tile_count"], property["current_value"], property["trading_value"], property["tile_class"], property["tile_class_revenue"], property["update_time"]  ] )
+
+
+    return render_template('properties_export.html')   
 
 
 @app.route('/properties_load/<string:profile_id>', methods = ['GET', 'POST'])

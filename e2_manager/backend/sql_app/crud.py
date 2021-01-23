@@ -51,10 +51,19 @@ def get_properties(db: Session, skip: int = 0, limit: int = 100, profile_id: str
     if profile_id is None:
         return db.query(models.Property).offset(skip).limit(limit).all()
     else:
-        return db.query(models.Property).filter(models.PropertyMod.profile_id == profile_id).offset(skip).limit(limit).all()
+        return db.query(models.Property).filter(models.Property.profile_id == profile_id).offset(skip).limit(limit).all()
 
 def get_property_by_landfield_id(db: Session, landfield_id: str):
     return db.query(models.Property).filter(models.Property.landfield_id == landfield_id).first()
+
+def get_properties_profile_ids(db: Session):
+    return db.query(models.Property.profile_id.distinct()).all()
+
+def get_properties_profile_ids_count(db: Session, profile_id: str):
+    return db.query(models.Property).filter(models.Property.profile_id == profile_id).count()
+
+
+    
 
 def create_property(db: Session, prop: schemas.PropertyMod ):
     db_property =  models.Property( 
