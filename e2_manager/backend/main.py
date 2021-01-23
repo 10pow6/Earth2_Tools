@@ -72,12 +72,26 @@ def mod_country( country: schemas.CountryMod, db: Session = Depends(get_db)):
 
 ################## property management
 @app.get("/properties_count/e2")
-def read_e2_properties_count( profile_id: str):
+def read_e2_properties_count( profile_id: str ):
     return E2Q.get_properties_count( profile_id )
 
 @app.get("/properties/e2")
-def read_e2_properties( profile_id: str, page: int = 1, property_count: int = 60):
+def read_e2_properties( profile_id: str, page: int = 1, property_count: int = 60 ):
     return E2Q.get_properties( profile_id, page, property_count )
+
+
+@app.get("/properties_by_id/db/")
+def read_db_properties_by_ids( db: Session = Depends(get_db), skip: int = 0, limit: int = 0, profile_id: str = None ):
+    return crud.get_properties( db=db, skip=skip,limit=limit, profile_id=profile_id )
+
+
+@app.get("/properties_profile_id/db/")
+def read_db_properties_profile_ids( db: Session = Depends(get_db) ):
+    return crud.get_properties_profile_ids( db=db )
+
+@app.get("/properties_profile_id_count/db/")
+def read_db_properties_profile_ids_count( db: Session = Depends(get_db), profile_id: str = None ):
+    return crud.get_properties_profile_ids_count( db=db, profile_id=profile_id )
 
 
 @app.post("/properties/db", response_model=List[schemas.Property])
