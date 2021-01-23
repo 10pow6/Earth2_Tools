@@ -168,7 +168,7 @@ def countries_load_subset():
 @app.route('/properties_export',methods = ['GET', 'POST'])
 def properties_export():
 
-    r = requests.get(BACKEND_API+"properties_by_id/db/?skip=0&limit=" + str(request.json["total_props"]) + "&property_id=" + request.json["profile_id"])
+    r = requests.get(BACKEND_API+"properties_by_id/db/?skip=0&limit=" + str(request.json["total_props"]) + "&profile_id=" + request.json["profile_id"])
 
     with open('ui_exports//properties.csv', 'w', newline='', encoding='utf-8') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
