@@ -5,9 +5,7 @@ venv\Scripts\active
 pip install -r requirements.txt
 ```
 
-Console 1 Activate Venv & Start Backend Server
 ```
-venv\Scripts\active
 uvicorn main:app
 ```
 

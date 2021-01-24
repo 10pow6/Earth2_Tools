@@ -17,6 +17,9 @@ Next generation E2 Tools :). This is just the beginning.
 
 Backend calls to E2 are pretty quick. Lots of areas that this could be optimized, but at the moment focus is on functionality.
 
+**Instructions**
+Run two consoles. One console will run UI, one console will run Backend.  Instructions are in backend and UI folders.
+
 **Roadmap:**
 1. Basic functionality hopefully by EOM Jan **DONE**
 2. Focus on UI elements after
