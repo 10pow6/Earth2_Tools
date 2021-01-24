@@ -7,13 +7,16 @@ import csv
 from string import Template
 from datetime import datetime
 
+from waitress import serve
+
 app = Flask(__name__)
 BACKEND_API="http://localhost:8000/"
 
-# To Be Implemented
+# Not implemented at the moment
 E2_RATE_LIMITER=1
 
 
+# Various JSON payload templates
 db_json_payload = """
     {
         "country_code": "$COUNTRY_CODE",
@@ -53,12 +56,14 @@ def index():
 def manage():
     return render_template('manage.html')
 
+# grab all loaded countries from the database (we hard code limit and just display them all)
 @app.route('/countries')
 def countries():
-    r = requests.get(BACKEND_API+"countries/db?skip=0&limit=400")
+    r = requests.get(BACKEND_API+"db/countries/?skip=0&limit=400")
 
     return render_template('countries.html',country_data=r.json())
 
+# optimization could be made here so that we don't get profile_id's on every page navigation flip
 @app.route('/properties/', defaults={'profile_id': None})
 @app.route('/properties/<string:profile_id>',methods=['GET'])
 def properties(profile_id=None):
@@ -73,36 +78,41 @@ def properties(profile_id=None):
         skip = skip * limit
 
     if( profile_id != None and total == None ):
-        total = requests.get(BACKEND_API+"properties_profile_id_count/db/?profile_id="+profile_id).text
+        total = requests.get(BACKEND_API+"db/properties/profile_ids/count?profile_id="+profile_id).text
     else:
         total = total
     
+    print("~~~~~~~~~~~~~")
+    print(" Selection  ")
+    print("~~~~~~~~~~~~~")
     print("SKIP: ", skip)
     print("LIMIT: ", limit)
     print("TOTAL: ", total)
     print("PROFILE_ID: ", profile_id)
+    print("~~~~~~~~~~~~~")
+    print("")
 
-    r = requests.get(BACKEND_API+"properties_profile_id/db/")
 
-    q = None
+    all_profile_id = requests.get(BACKEND_API+"db/properties/profile_ids")
 
     if( profile_id != None ):
-        q = requests.get(BACKEND_API+"properties_by_id/db/?skip=" + str(skip) + "&limit=" + str(limit) + "&profile_id=" + profile_id).json()
+        q = requests.get(BACKEND_API+"db/properties/by_profile_id?skip=" + str(skip) + "&limit=" + str(limit) + "&profile_id=" + profile_id ).json()
     else:
         q = json.loads("{}")
 
-    return render_template('properties.html',all_profile_id=r.json(), property_data=q, profile_id=profile_id, skip=skip, limit=limit,total=total)
+    return render_template('properties.html',all_profile_id=all_profile_id.json(), property_data=q, profile_id=profile_id, skip=skip, limit=limit,total=total)
 
 
 
-
-@app.route('/countries_detail/<string:country_code>')
-def countries_detail(country_code):
-    r = requests.get(BACKEND_API+"countries_historical/db?country_code=" + country_code)
+# historical details of a specific country
+@app.route('/countries/detail/<string:country_code>')
+def country_detail(country_code):
+    r = requests.get(BACKEND_API+"db/countries/historical?country_code=" + country_code)
     print(r.json())
     return render_template('countries_detail.html',country_data=r.json(), country_code=country_code)
 
 
+# export countries to CSV
 @app.route('/countries_export',methods = ['GET', 'POST'])
 def countries_export():
     with open('ui_exports//countries.csv', 'w', newline='',encoding='utf-8') as csvfile:
@@ -117,58 +127,63 @@ def countries_export():
     return render_template('countries_export.html')   
 
 
-
-#### TODO:  parameterize this to accept string list
+# load e2 countries into local db
 @app.route('/countries_load_all', methods = ['GET', 'POST'])
 def countries_load_all():
-    print("TRYING: " + BACKEND_API+"countries_all/e2")
+    print("TRYING: " + BACKEND_API+"e2/countries/all")
     status_codes = []
-    r = requests.get(BACKEND_API+"countries_all/e2")
+    r = requests.get(BACKEND_API+"e2/countries/all")
 
+    db_payload = "["
     cur_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]+"Z"
     for payload in r.json():
         country_payload = payload["data"]["getTilePrices"]
-        status_codes.append(r.status_code)
         for country in country_payload:
-            db_payload = Template(db_json_payload).substitute(COUNTRY_CODE=country["countryCode"],UPDATE_TIME=cur_time,TRADE_AVG=country["tradeAverage"],FINAL=country["final"],TOTAL_TILES_SOLD=country["totalTilesSold"])
-            r = requests.post(BACKEND_API+"countries/db", json=json.loads(db_payload) )
-            status_codes.append(r.status_code)
+            db_payload += Template(db_json_payload).substitute(COUNTRY_CODE=country["countryCode"],UPDATE_TIME=cur_time,TRADE_AVG=country["tradeAverage"],FINAL=country["final"],TOTAL_TILES_SOLD=country["totalTilesSold"]) + ","
+
+    db_payload = db_payload[:-1] + "]"
+
+    r = requests.post(BACKEND_API+"db/countries/save", json=json.loads(db_payload) )
+    status_codes.append(r.status_code)
 
 
     return render_template('countries_load_all.html',status_codes=status_codes)
 
-#### TODO:  parameterize this to accept string list
-@app.route('/countries_load_subset', methods = ['GET', 'POST'])
-def countries_load_subset():
 
-    country_list = ["US","NU"]
+# load a subset of e2 countries into local db; could optimize via ajax so we don't pull the entire db list down again
+@app.route('/countries_load_subset/<string:country>', methods = ['GET', 'POST'])
+def countries_load_subset(country):
     query_param = "?"
+    query_param += "c=" + country
 
-    for country in country_list:
-        query_param += "c=" + country + "&"
-    query_param = query_param[:-1]
-
-    print("TRYING: " + BACKEND_API+"countries/e2" + query_param)
+    print("TRYING: " + BACKEND_API+"e2/countries" + query_param)
     status_codes = []
-    r = requests.get(BACKEND_API+"countries/e2" + query_param)
+    r = requests.get(BACKEND_API+"e2/countries" + query_param)
+
+    db_payload ="["
     payload = r.json()["data"]["getTilePrices"]
     status_codes.append(r.status_code)
 
     cur_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]+"Z"
     for country in payload:
-        country_payload = Template(db_json_payload).substitute(COUNTRY_CODE=country["countryCode"],UPDATE_TIME=cur_time,TRADE_AVG=country["tradeAverage"],FINAL=country["final"],TOTAL_TILES_SOLD=country["totalTilesSold"])
-        r = requests.post(BACKEND_API+"countries/db", json=json.loads(country_payload) )
-        status_codes.append(r.status_code)
+        db_payload += Template(db_json_payload).substitute(COUNTRY_CODE=country["countryCode"],UPDATE_TIME=cur_time,TRADE_AVG=country["tradeAverage"],FINAL=country["final"],TOTAL_TILES_SOLD=country["totalTilesSold"]) + ","
+    
+    db_payload = db_payload[:-1] + "]"
+    
+    r = requests.post(BACKEND_API+"db/countries/save", json=json.loads(db_payload) )
+    status_codes.append(r.status_code)
 
 
-    return render_template('countries_load_all.html',status_codes=status_codes)
+    r = requests.get(BACKEND_API+"db/countries/?skip=0&limit=400")
+
+    return render_template('countries.html',country_data=r.json())
 
 
-
+# export properties to csv
 @app.route('/properties_export',methods = ['GET', 'POST'])
 def properties_export():
 
-    r = requests.get(BACKEND_API+"properties_by_id/db/?skip=0&limit=" + str(request.json["total_props"]) + "&profile_id=" + request.json["profile_id"])
+    r = requests.get(BACKEND_API+"db/properties/by_profile_id?skip=0&limit=" + str(request.json["total_props"]) + "&profile_id=" + request.json["profile_id"])
 
     with open('ui_exports//properties.csv', 'w', newline='', encoding='utf-8') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
@@ -183,13 +198,14 @@ def properties_export():
     return render_template('properties_export.html')   
 
 
+# load properties from local db
 @app.route('/properties_load/<string:profile_id>', methods = ['GET', 'POST'])
 def properties_load(profile_id):
     query_param = "?profile_id=" + profile_id
-    print("TRYING: " + BACKEND_API+"properties_count/e2/" + query_param)
+    print("TRYING: " + BACKEND_API+"e2/properties/count" + query_param)
 
     status_codes = []
-    r = requests.get(BACKEND_API+"properties_count/e2/" + query_param)
+    r = requests.get(BACKEND_API+"e2/properties/count" + query_param)
     total_props = r.json()["data"]["getUserLandfields"]["count"]
     print("TOTAL_PROPS: " + str(total_props) )
     status_codes.append(r.status_code)
@@ -204,7 +220,7 @@ def properties_load(profile_id):
     for i in range(1,(pages+1) ):
         query_page =  query_param + "&page=" + str(i) + "&count=60"
         
-        r = requests.get(BACKEND_API+"properties/e2" + query_page)
+        r = requests.get(BACKEND_API+"e2/properties" + query_page)
         status_codes.append(r.status_code)
 
 
@@ -233,10 +249,20 @@ def properties_load(profile_id):
         final_property_json = '[' + ','.join(final_property_json_str) + ']'
         print(final_property_json)
   
-        r = requests.post(BACKEND_API+"properties/db", json=json.loads(final_property_json) )
+        r = requests.post(BACKEND_API+"db/properties/save", json=json.loads(final_property_json) )
         status_codes.append(r.status_code)
         
 
         
 
     return render_template('properties_load.html',status_codes=status_codes)
+
+
+
+
+if __name__ == "__main__":
+   # Flask Debug Server
+   #app.run() 
+ 
+   # waitress Production Server
+   serve(app, host='0.0.0.0', port=5000)
