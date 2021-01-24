@@ -29,12 +29,12 @@
         </tr>
             {% for country in country_data %}
                 <tr>
-                    <td><a href="/countries_detail/{{ country['country_code'] }}">{{ country["country_code"] }}</a></td>
+                    <td><a href="/country/detail/{{ country['country_code'] }}">{{ country["country_code"] }}</a></td>
                     <td>{{ country["update_time"] }}</td>
                     <td>{{ country["trade_average"] }}</td>
                     <td>{{ country["final"] }}</td>
                     <td>{{ country["total_tiles_sold"] }}</td>
-                    <td><input type="button" class="refresh" id="refresh_country_{{ country['country_code'] }}" value="{{ country['country_code'] }}">Refresh (WIP- Does not Work)</td>
+                    <td><a href="/countries_load_subset/{{ country['country_code'] }}">Refresh {{ country["country_code"] }}</td>
                 </tr>
             {% endfor %}   
    </table>

@@ -70,7 +70,7 @@
 <!-- pagination -->
 {% if profile_id != None %}
     {% for i in range( (total |int / limit |int)|round(0,'ceil')|int ) %}
-      <a href="{{ url_for('properties') }}{{ profile_id }}?skip={{ i }}">{{ i }}</a> &nbsp;
+      <a href="{{ url_for('properties') }}{{ profile_id }}?skip={{ i }}&total={{ total }}">{{ i }}</a> &nbsp;
     {% endfor %}
 {% endif %}
 
