@@ -29,7 +29,7 @@
         </tr>
             {% for country in country_data %}
                 <tr>
-                    <td><a href="/country/detail/{{ country['country_code'] }}">{{ country["country_code"] }}</a></td>
+                    <td><a href="/countries/detail/{{ country['country_code'] }}">{{ country["country_code"] }}</a></td>
                     <td>{{ country["update_time"] }}</td>
                     <td>{{ country["trade_average"] }}</td>
                     <td>{{ country["final"] }}</td>
