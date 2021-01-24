@@ -14,6 +14,8 @@ Note -- Only for testing, do not use
 uvicorn main:app --reload
 ```
 
-**URL**
+**URLs**
+
 http://localhost:8000
+
 http://localhost:8000/docs
