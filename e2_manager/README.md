@@ -33,7 +33,7 @@ Backend calls to E2 are pretty quick. Lots of areas that this could be optimized
 ![Properties Load](/e2_manager/screenshots/properties.png?raw=true "Load your profile data")
 
 **Build your own apps against the E2 Manager API**
-![E2 Manager API](/e2_manager/screenshots/e2mapi.png?raw=true "E2M Api")
+![E2 Manager API](/e2_manager/screenshots/e2_mapi.png?raw=true "E2M Api")
 
 **Export to CSV!**
 ![CSV Export](/e2_manager/screenshots/export.png?raw=true "Export to CSV")
