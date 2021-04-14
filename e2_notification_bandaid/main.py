@@ -6,7 +6,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 API="https://app.earth2.io/graphql"
 
-uid = "YOUR USER ID HERE"
+uid = "YOUR USER NAME HERE"
 pg = 1
 itm = 1
 
@@ -23,6 +23,7 @@ query {
             description
             bidentrySet
             {
+              result
               created
               offerSet
               {
@@ -46,9 +47,9 @@ query {
 data = Template(QUERY_properties_template).substitute(USER_ID=uid, PAGE=pg, ITEMS=itm)
 
 
+
 response = httpx.post( API, json={'query': data})
 data = response.json()
-
 itm = 60
 
 counts = int(data["data"]["getUserLandfields"]["count"])
@@ -65,8 +66,16 @@ for i in range(1,pages+1):
     data = response.json()
     for landfield in data["data"]["getUserLandfields"]["landfields"]:
         if len( landfield["bidentrySet"] ) > 0:
-            link = "https://app.earth2.io/#thegrid/" + landfield["id"]
-            description = ( landfield["description"] + "  |  ")
-            html = '<br><a href="' + link + '" target="new">' + description + link + "</a>"
-            print( html )
+            show = False
+            bes = landfield["bidentrySet"]
+            for bid in bes:
+                if bid["result"] == "ONGOING":
+                    show = True
+                    break
+            
+            if show:
+                link = "https://app.earth2.io/#thegrid/" + landfield["id"]
+                description = ( landfield["description"] + "  |  ")
+                html = '<br><a href="' + link + '" target="new">' + description + link + "</a>"
+                print( html )
     pg = pg + 1
